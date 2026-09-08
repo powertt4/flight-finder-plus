@@ -1,37 +1,20 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plane } from "lucide-react";
+import { usePageMeta } from "@/lib/use-page-meta";
 
-type AuthSearch = { mode?: "signin" | "signup" | undefined };
+export default function AuthPage() {
+  usePageMeta({
+    title: "Sign in — Flight Price Notifier",
+    description: "Sign in or create an account to track flight fares and get price drop alerts.",
+    ogDescription: "Sign in or create an account to track flight fares.",
+  });
 
-export const Route = createFileRoute("/auth")({
-  ssr: false,
-  validateSearch: (search: Record<string, unknown>): AuthSearch => ({
-    mode: search['mode'] === "signin" ? "signin" : undefined,
-  }),
-  head: () => ({
-    meta: [
-      { title: "Sign in — Flight Price Notifier" },
-      {
-        name: "description",
-        content: "Sign in or create an account to track flight fares and get price drop alerts.",
-      },
-      { property: "og:title", content: "Sign in — Flight Price Notifier" },
-      {
-        property: "og:description",
-        content: "Sign in or create an account to track flight fares.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: AuthPage,
-});
-
-function AuthPage() {
   const navigate = useNavigate();
-  const { mode } = Route.useSearch();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get("mode") === "signin" ? "signin" : undefined;
+
   const [isSignUp, setIsSignUp] = useState(mode !== "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,11 +24,11 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/app", replace: true });
+      if (data.user) navigate("/app", { replace: true });
     });
   }, [navigate]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setNotice(null);
@@ -66,7 +49,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/app", replace: true });
+      navigate("/app", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
     } finally {

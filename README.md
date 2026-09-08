@@ -22,3 +22,10 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Deployment
+
+This is a static Vite + React single-page app. `npm run build` outputs a
+static site to `dist/`, ready to host anywhere that serves static files
+(e.g. Vercel). `vercel.json` includes a SPA rewrite so deep links like `/app`
+resolve to `index.html` and are handled client-side by React Router.

@@ -1,25 +1,18 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useNavigate, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Plane, BellRing } from "lucide-react";
+import { usePageMeta } from "@/lib/use-page-meta";
+import { useAuthUser } from "@/components/RequireAuth";
 
-export const Route = createFileRoute("/_authenticated/app")({
-  head: () => ({
-    meta: [
-      { title: "Your dashboard — Flight Price Notifier" },
-      { name: "description", content: "Your saved flight routes and price alerts." },
-      { property: "og:title", content: "Your dashboard — Flight Price Notifier" },
-      { property: "og:description", content: "Your saved flight routes and price alerts." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: Dashboard,
-});
+export default function Dashboard() {
+  usePageMeta({
+    title: "Your dashboard — Flight Price Notifier",
+    description: "Your saved flight routes and price alerts.",
+    robots: "noindex",
+  });
 
-function Dashboard() {
-  const { user } = Route.useRouteContext();
+  const user = useAuthUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -27,7 +20,7 @@ function Dashboard() {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate("/auth", { replace: true });
   }
 
   return (

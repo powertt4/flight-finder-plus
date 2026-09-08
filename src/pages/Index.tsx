@@ -1,30 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Plane, BellRing, LineChart } from "lucide-react";
+import { usePageMeta } from "@/lib/use-page-meta";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Flight Price Notifier — Get alerted when fares drop" },
-      {
-        name: "description",
-        content:
-          "Track flight routes and get an alert the moment prices drop. Set your target fare once and let Flight Price Notifier watch the rest.",
-      },
-      { property: "og:title", content: "Flight Price Notifier — Get alerted when fares drop" },
-      {
-        property: "og:description",
-        content: "Track flight routes and get an alert the moment prices drop.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Index,
-});
+export default function Index() {
+  usePageMeta({
+    title: "Flight Price Notifier — Get alerted when fares drop",
+    description:
+      "Track flight routes and get an alert the moment prices drop. Set your target fare once and let Flight Price Notifier watch the rest.",
+    ogDescription: "Track flight routes and get an alert the moment prices drop.",
+  });
 
-function Index() {
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
@@ -70,8 +57,7 @@ function Index() {
               Create free account
             </Link>
             <Link
-              to="/auth"
-              search={{ mode: "signin" }}
+              to="/auth?mode=signin"
               className="rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:bg-accent"
             >
               I already have an account
