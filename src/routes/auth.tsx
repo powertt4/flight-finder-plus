@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Plane } from "lucide-react";
 
-type AuthSearch = { mode?: "signin" | "signup" };
+type AuthSearch = { mode?: "signin" | "signup" | undefined };
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
