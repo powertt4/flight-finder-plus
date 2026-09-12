@@ -35,7 +35,7 @@ export default function Index() {
             to={signedIn ? "/app" : "/auth"}
             className="rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
           >
-            {signedIn ? "Open dashboard" : "Sign in"}
+            {signedIn ? "Open dashboard" : "Sign in / 登入"}
           </Link>
         </header>
 
@@ -44,10 +44,10 @@ export default function Index() {
             Fare tracking, on autopilot
           </p>
           <h1 className="mt-4 max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-            Never overpay for a flight again.
+            設定航線與目標價，機票降價就通知你
           </h1>
           <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-            Pick a route, name your price, and get notified the moment the fare drops below it.
+            Set a route and a target price — we email you when the fare drops.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
@@ -68,18 +68,18 @@ export default function Index() {
             {[
               {
                 icon: LineChart,
-                title: "Watch any route",
-                body: "Save the trips you care about and keep an eye on their fares over time.",
+                title: "盯緊熱門航線 (Always-on route watching)",
+                body: "持續監控台北出發的熱門航線（東京、首爾），自動抓最低票價。",
               },
               {
                 icon: BellRing,
-                title: "Drop alerts",
-                body: "Set a target price and hear from us only when it's actually worth booking.",
+                title: "達標自動通知 (Target-price email alerts)",
+                body: "低於你設定的目標價，就寄 email 提醒你，附上立即訂購連結。",
               },
               {
                 icon: Plane,
-                title: "Book with confidence",
-                body: "See where a fare sits against its recent range before you commit.",
+                title: "隨時取消 (Cancel anytime)",
+                body: "月訂閱制，不想用隨時停，沒有綁約。",
               },
             ].map(({ icon: Icon, title, body }) => (
               <div key={title} className="rounded-2xl border border-border bg-card p-6">
@@ -90,6 +90,10 @@ export default function Index() {
             ))}
           </section>
         </main>
+
+        <footer className="mx-auto max-w-6xl px-6 pb-10 text-center text-sm text-muted-foreground">
+          © 2026 Flight Price Notifier
+        </footer>
       </div>
     </div>
   );
