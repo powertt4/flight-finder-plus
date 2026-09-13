@@ -43,3 +43,26 @@ export async function subscribe(input: SubscribeInput): Promise<{ ok: boolean; r
   const route = (data as { route?: string }).route;
   return route ? { ok: true, route } : { ok: true };
 }
+
+export interface Subscription {
+  email: string;
+  route: string;
+  plan_name: PlanName;
+  origin: string;
+  destination: string;
+  target_price: number; // TWD
+  currency: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function listSubscriptions(email: string): Promise<Subscription[]> {
+  const res = await fetch(
+    `${FLIGHT_API_URL}/subscriptions?email=${encodeURIComponent(email)}`,
+  );
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+  const data = (await res.json()) as { subscriptions?: Subscription[] };
+  return data.subscriptions ?? [];
+}

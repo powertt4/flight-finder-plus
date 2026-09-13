@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Plane, BellRing } from "lucide-react";
 import { usePageMeta } from "@/lib/use-page-meta";
 import { useAuthUser } from "@/components/RequireAuth";
-import { PLANS, subscribe, type PlanName } from "@/lib/flight-api";
+import { PLANS, subscribe, listSubscriptions, type PlanName } from "@/lib/flight-api";
 
 type CardStatus =
   | { kind: "idle" }
@@ -33,6 +33,39 @@ export default function Dashboard() {
     tokyo: { kind: "idle" },
     seoul: { kind: "idle" },
   });
+  const [loading, setLoading] = useState(true);
+
+  // On mount, hydrate the subscribed state from the server so a page reload
+  // keeps showing 已訂閱 (not just the in-session flip after a POST).
+  useEffect(() => {
+    let cancelled = false;
+    if (!user.email) {
+      setLoading(false);
+      return;
+    }
+    listSubscriptions(user.email)
+      .then((subs) => {
+        if (cancelled) return;
+        setStatus((prev) => {
+          const next = { ...prev };
+          for (const sub of subs) {
+            if (sub.plan_name === "tokyo" || sub.plan_name === "seoul") {
+              next[sub.plan_name] = { kind: "subscribed", target: sub.target_price };
+            }
+          }
+          return next;
+        });
+      })
+      .catch(() => {
+        // Non-fatal: leave cards in their default (idle) state.
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user.email]);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -89,6 +122,10 @@ export default function Dashboard() {
         <p className="mt-2 text-muted-foreground">
           挑一條航線、填一個你能接受的台幣目標價，票價一旦低於它，我們就寄 email 通知你。
         </p>
+
+        {loading && (
+          <p className="mt-6 text-sm text-muted-foreground">載入你的訂閱狀態中…</p>
+        )}
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
           {PLANS.map((plan) => {
